@@ -1,0 +1,185 @@
+/* basic box-sizing */
+
+*, *::after, *::before
+{
+    box-sizing: border-box;
+}
+
+:root
+{
+    --cell-size: 100px;
+    --mark-size: calc(var(--cell-size) * .9);
+}
+
+body
+{
+    margin: 0;
+}
+
+.board
+{
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    /* these will center our board element  */
+    /* This aligns items along the x axis  */
+    justify-content: center;
+    /* This aligns objects along the y axis  */
+    align-content: center;
+    /* This creates three columns. auto - takes the size of the cells */
+    grid-template-columns: repeat(3,auto);
+    justify-items: center;
+    align-items: center;
+}
+
+.cell
+{
+    width: var(--cell-size);
+    height: var(--cell-size);
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.cell:first-child,
+.cell:nth-child(2),
+.cell:nth-child(3)
+{
+    border-top: none;
+}
+
+.cell:nth-child(3n +1)
+{
+    border-left: none;
+}
+
+.cell:nth-child(3n +3)
+{
+    border-right: none;
+}
+
+.cell:nth-child(7),
+.cell:nth-child(8),
+.cell:last-child
+{
+    border-bottom: none;
+}
+
+/* This disallows a cell which contains an element from being selected */
+.cell.o,
+.cell.x
+{   
+    cursor: not-allowed;
+}
+
+/* This is before our hover selector so that the color can overide properly */
+.cell.x::before,
+.cell.x::after,
+.cell.o::before
+{
+    background-color: black;
+}
+
+
+/* Selecting our board when it has the x class applied to it */
+.board.x .cell:not(.x):not(.o):hover::before,
+.board.x .cell:not(.x):not(.o):hover::after,
+.board.o .cell:not(.x):not(.o):hover::before
+{
+    background-color: lightgrey;
+}
+
+
+/* Using the before and after element allows the empty string to be rendered???  */
+.cell.x::before,
+.cell.x::after,
+.board.x .cell:not(.x):not(.o):hover::before,
+.board.x .cell:not(.x):not(.o):hover::after
+{   
+    content: '';
+    width: calc(var(--mark-size) * .15);
+    height: var(--mark-size);
+    position:absolute;  /* This allows our elements to have the same base and not overlap each other */
+}
+
+.cell.x::before,
+.board.x .cell:not(.x):not(.o):hover::before
+{
+    transform:rotate(45deg);
+}
+
+.cell.x::after,
+.board.x .cell:not(.x):not(.o):hover::after
+{
+    transform: rotate(-45deg);
+}
+
+
+/* when we are on a board that has the o class, we want to get the cells inside that are not already an x & not 
+already a o. when we hover over them, we want to style the before and after element */
+.cell.o::before,
+.cell.o::after,
+.board.o .cell:not(.x):not(.o):hover::before,
+.board.o .cell:not(.x):not(.o):hover::after
+{   
+    content: '';
+    border-radius: 50%;
+    position:absolute;  /* This allows our elements to have the same base and not overlap each other */
+}
+
+.cell.o::before,
+.board.o .cell:not(.x):not(.o):hover::before
+{
+    width: var(--mark-size);
+    height: var(--mark-size);
+}
+
+.cell.o::after,
+.board.o .cell:not(.x):not(.o):hover::after
+{
+    width: calc(var(--mark-size) *.7);
+    height: calc(var(--mark-size) *.7);
+    background-color: white;
+}
+
+
+.winning-message
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 5rem;
+    flex-direction: column;
+}
+
+
+.winning-message button
+{
+    font-size: 3rem;
+    background-color: white;
+    border: 1px solid black;
+    padding: .25em .5em;
+    cursor:pointer;
+}
+
+.winning-message button:hover
+{
+    background-color: black;
+    color: white;
+    border-color: white;
+}
+
+.winning-message.show
+{
+    display: flex;
+}
